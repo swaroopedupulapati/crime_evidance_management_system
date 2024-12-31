@@ -51,11 +51,43 @@ def removecase():
 
 @app.route('/reghio',methods=['GET', 'POST'])
 def reghio():
-    pass
+    if request.method == 'POST':
+        global higher_credentials
+        ID=request.form['id']
+        Name=request.form['name']
+        Password=f"{ID}@123"
+        Email=request.form["email"]
+        Phone=request.form["phone"]
+        Address=request.form["address"]
+        Qualification=request.form["qualification"]
+        if ID not in higher_credentials:
+            higher_credentials[ID]={"Name":Name,"password":Password,"Email":Email,"phone_no":Phone,"Address":Address,"Qualification":Qualification}
+            print(higher_credentials[ID])
+            return f"{Name} updated successfully"
+        else:
+            return render_template("register_hio.html")
+    else:
+        return render_template("register_hio.html")
 
 @app.route('/regloo',methods=['GET', 'POST'])
 def regloo():
-    pass
+    if request.method == 'POST':
+        global lower_credentials
+        ID=request.form['id']
+        Name=request.form['name']
+        Password=f"{ID}@123"
+        Email=request.form["email"]
+        Phone=request.form["phone"]
+        Address=request.form["address"]
+        Qualification=request.form["qualification"]
+        if ID not in lower_credentials:
+            lower_credentials[ID]={"Name":Name,"password":Password,"Email":Email,"phone_no":Phone,"Address":Address,"Qualification":Qualification}
+            print(lower_credentials[ID])
+            return f"{Name} updated successfully"
+        else:
+            return render_template("register_loo.html")
+    else:
+        return render_template("register_loo.html")
 
 @app.route('/remhio',methods=['GET', 'POST'])
 def remhio():
