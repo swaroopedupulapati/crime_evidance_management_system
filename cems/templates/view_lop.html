@@ -1,0 +1,29 @@
+<html>
+    <head>
+        <style>
+            body{
+                background-color:black
+            }
+            .details{
+                float: left;
+                width: 70vw;
+                margin-left:10vw;
+                margin-right: 10vw;
+                background-color: rgb(91, 88, 88);
+                color: white;
+                padding-left: 10vw;
+                padding-top: 5vw ;
+            }
+        </style>
+
+    </head>
+    <body>
+        <div class="details">
+            {% for label, data in profile.items() %}
+                <h1>{{label}}:</h1><br>
+                {{data}}<br><br>
+            {% endfor %}
+        </div>
+        
+    </body>
+</html>

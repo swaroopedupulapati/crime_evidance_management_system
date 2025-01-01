@@ -4,10 +4,14 @@ app = Flask(__name__)
 
 
 higher_credentials={"100":{"password":"police@123"},
-                    "101":{"password":"swaroop@123"}}
+                    "101":{"password":"swaroop@123"},
+                    "581":{"Name":"swaroop","password":"swaroop@123","Email":"swaroopedupulapati1@gmail.com","phone_no":"9999999999","Address":"marlapadu","Qualification":"btech"}}
 lower_credentials={"10":{"password":"tiru@123"},
-                   "11":{"password":"ashok@123"}}
+                   "11":{"password":"ashok@123"},
+                    "581":{"Name":"swaroop","password":"swaroop@123","Email":"swaroopedupulapati1@gmail.com","phone_no":"9999999999","Address":"marlapadu","Qualification":"btech"}}
 
+higher_id=""
+lower_id=""
 
 
 @app.route('/',methods=['GET', 'POST'])
@@ -18,6 +22,8 @@ def home():
 def higher_login():
     global higher_credentials
     id=request.form['id']
+    global higher_id
+    higher_id=id
     password=request.form['password']
     if (id in higher_credentials) and (password == higher_credentials[id]["password"]) :
         print(higher_credentials[id])
@@ -28,6 +34,8 @@ def higher_login():
 def lower_login():
     global lower_credentials
     id=request.form['id']
+    global lower_id
+    lower_id=id
     password=request.form['password']
     if (id in lower_credentials) and (password == lower_credentials[id]["password"]):
         print(lower_credentials[id])
@@ -36,6 +44,19 @@ def lower_login():
         return render_template("login.html",msg="invalid credentials")
 
 
+@app.route('/viewhipro',methods=['GET', 'POST'])
+def viewhipro():
+    global higher_credentials
+    global higher_id
+    data=higher_credentials[higher_id]
+    return render_template("view_hip.html",profile=data)
+
+@app.route('/viewlopro',methods=['GET', 'POST'])
+def viewlopro():
+    global lower_credentials
+    global lower_id
+    data=lower_credentials[lower_id]
+    return render_template("view_lop.html",profile=data)
 
 @app.route('/viewcase',methods=['GET', 'POST'])
 def viewcase():
@@ -100,3 +121,15 @@ def remloo():
 @app.route('/hio_changepasss',methods=['GET', 'POST'])
 def hio_changepasss():
     pass
+
+
+
+
+
+
+
+
+
+
+
+app.run(debug=True)
