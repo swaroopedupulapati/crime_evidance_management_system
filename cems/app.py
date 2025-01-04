@@ -120,10 +120,34 @@ def remloo():
 
 @app.route('/hio_changepasss',methods=['GET', 'POST'])
 def hio_changepasss():
-    pass
+    global higher_credentials
+    if request.method == 'POST':
+        op=request.form['op']
+        np=request.form['np']
+        if op==higher_credentials[higher_id]["password"]:
+            higher_credentials[higher_id]["password"]=np
+            return"""
+                    <h1>password change successfully</h1>    """
+        else:
+            return render_template("change_hio_pass.html")
+    else:
+        return render_template("change_hio_pass.html")
 
 
-
+@app.route('/loo_changepasss',methods=['GET', 'POST'])
+def loo_changepasss():
+    global lower_credentials
+    if request.method == 'POST':
+        op=request.form['op']
+        np=request.form['np']
+        if op==lower_credentials[lower_id]["password"]:
+            lower_credentials[lower_id]["password"]=np
+            return"""
+                    <h1>password change successfully</h1>    """
+        else:
+            return render_template("change_loo_pass.html")
+    else:
+        return render_template("change_loo_pass.html")
 
 
 
