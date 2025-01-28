@@ -105,9 +105,9 @@ def viewcase():
 def entercase():
     pass
 
-@app.route('/removecase',methods=['GET', 'POST'])
-def removecase():
-    pass
+# @app.route('/removecase',methods=['GET', 'POST'])
+# def removecase():
+#     pass
 
 @app.route('/reghio',methods=['GET', 'POST'])
 def reghio():
@@ -151,11 +151,30 @@ def regloo():
 
 @app.route('/remhio',methods=['GET', 'POST'])
 def remhio():
-    pass
+    if request.method == 'POST':
+        eid=request.form['eid']
+        reid=request.form['reid']
+        if eid==reid and (eid in higher_credentials):
+            higher_credentials.pop(eid)
+            return render_template("remove_hio.html",msg=f"{eid} removed successfully")
+        else:
+            return render_template("remove_hio.html",msg="Invalid")
+    else:
+        return render_template("remove_hio.html")
 
 @app.route('/remloo',methods=['GET', 'POST'])
 def remloo():
-    pass
+    if request.method == 'POST':
+        eid=request.form['eid']
+        reid=request.form['reid']
+        if eid==reid and (eid in lower_credentials):
+            lower_credentials.pop(eid)
+            return render_template("remove_hio.html",msg=f"{eid} removed successfully")
+        else:
+            return render_template("remove_loo.html",msg="Invalid")
+    else:
+        return render_template("remove_loo.html")
+
 
 @app.route('/hio_changepasss',methods=['GET', 'POST'])
 def hio_changepasss():
@@ -265,8 +284,8 @@ def view():
 
             file_contents = case_details_with_files
         else:
-            flash('No case found with the given case number.', 'error')
-
+            # return render_template("view_case.html",msg="not occur")
+            return flash(jsonify({'error': 'Case not found'}), 404)
     return render_template('view_case.html', case_data=case_data, file_contents=file_contents)
 
 
@@ -568,6 +587,24 @@ def downloadd(file_id):
     }.get(file_type, 'application/octet-stream')
 
     return Response(file_data.read(), content_type=content_type)
+
+
+@app.route('/removecase',methods=['GET', 'POST'])
+def removecase():
+    if request.method == 'POST':
+        case_no=request.form['case_no']
+        rcase_no=request.form['rcase_no']
+        if case_no== rcase_no and (collection.find_one({'case_number': case_no})):
+            collection.delete_one({'case_number': case_no})
+            return render_template("remove_case.html",msg=f"{case_no} has been removed successfully")
+        else:
+            return render_template("remove_case.html",msg="Invalid")
+    else:
+        return render_template("remove_case.html")
+
+
+
+
 
 
 app.run(debug=True)
