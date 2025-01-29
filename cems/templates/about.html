@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            width: 60%;
+            margin: auto;
+            margin-top: 20vh;
+            padding: 20px;
+            background-color: rgb(91, 88, 88);
+            border-radius: 2vw;
+        }
+        h1 {
+            font-size: 3vw;
+        }
+        p {
+            font-size: 1.5vw;
+        }
+        .redirect-button {
+            display: inline-block;
+            margin-top: 2vw;
+            padding: 1vw 2vw;
+            font-size: 1.5vw;
+            color: white;
+            background-color: red;
+            border: none;
+            border-radius: 1vw;
+            cursor: pointer;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1></h1>
+        <p>This system allows higher and lower officials to securely log in and manage their operations efficiently. 
+           Our platform ensures data integrity and provides a seamless experience for users.</p>
+        <button onclick="window.location.href='/hlogin'">Higher Login</button>
+        <button onclick="window.location.href='/llogin'">Lower Login</button>
+
+    </div>
+</body>
+</html>

@@ -52,11 +52,16 @@ lower_credentials={"10":{"password":"tiru@123"},
 higher_id=""
 lower_id=""
 
-
 @app.route('/',methods=['GET', 'POST'])
 def home():
-    return render_template('login.html')
+    return render_template('about.html')
 
+@app.route('/hlogin',methods=['GET', 'POST'])
+def hlogin():
+    return render_template('higher_login.html')
+@app.route('/llogin',methods=['GET', 'POST'])
+def llogin():
+    return render_template('lower_login.html')
 @app.route('/higher_login',methods=['GET', 'POST'])
 def higher_login():
     global higher_credentials
@@ -68,7 +73,7 @@ def higher_login():
         print(higher_credentials[id])
         return render_template('higher_home.html')
     else:
-        return render_template("login.html",msg="invalid credentials")
+        return render_template("higher_login.html",msg="invalid credentials")
 @app.route('/lower_login',methods=['GET', 'POST'])
 def lower_login():
     global lower_credentials
@@ -80,7 +85,7 @@ def lower_login():
         print(lower_credentials[id])
         return render_template('lower_home.html')
     else:
-        return render_template("login.html",msg="invalid credentials")
+        return render_template("lower_login.html",msg="invalid credentials")
 
 
 @app.route('/viewhipro',methods=['GET', 'POST'])
