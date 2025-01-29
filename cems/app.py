@@ -30,8 +30,6 @@ my_db = my_client[database]
 collection = my_db['cases']
 fs = gridfs.GridFS(my_db)  # Initialize GridFS
 
-
-
 # Email Configuration
 SENDER_EMAIL = "swaroopqis@gmail.com"
 SENDER_PASSWORD =  "qihb sgty ysew ikes"
@@ -52,6 +50,8 @@ lower_credentials={"10":{"password":"tiru@123"},
 higher_id=""
 lower_id=""
 
+
+# home
 @app.route('/',methods=['GET', 'POST'])
 def home():
     if request.method=='POST':
@@ -62,9 +62,9 @@ def home():
             return render_template('lower_login.html')
     else:
         return render_template("about.html")
-
-
     return render_template('lower_login.html')
+
+# higher home after login
 @app.route('/higher_login',methods=['GET', 'POST'])
 def higher_login():
     global higher_credentials
@@ -77,6 +77,8 @@ def higher_login():
         return render_template('higher_home.html')
     else:
         return render_template("higher_login.html",msg="invalid credentials")
+
+# lower home after login
 @app.route('/lower_login',methods=['GET', 'POST'])
 def lower_login():
     global lower_credentials
@@ -90,7 +92,7 @@ def lower_login():
     else:
         return render_template("lower_login.html",msg="invalid credentials")
 
-
+# for viewing higher profile
 @app.route('/viewhipro',methods=['GET', 'POST'])
 def viewhipro():
     global higher_credentials
@@ -98,6 +100,7 @@ def viewhipro():
     data=higher_credentials[higher_id]
     return render_template("view_hip.html",profile=data)
 
+# for viewing lower profile
 @app.route('/viewlopro',methods=['GET', 'POST'])
 def viewlopro():
     global lower_credentials
@@ -105,18 +108,7 @@ def viewlopro():
     data=lower_credentials[lower_id]
     return render_template("view_lop.html",profile=data)
 
-@app.route('/viewcase',methods=['GET', 'POST'])
-def viewcase():
-    pass
-
-@app.route('/entercase',methods=['GET', 'POST'])
-def entercase():
-    pass
-
-# @app.route('/removecase',methods=['GET', 'POST'])
-# def removecase():
-#     pass
-
+# for registering higher offiecial
 @app.route('/reghio',methods=['GET', 'POST'])
 def reghio():
     if request.method == 'POST':
@@ -137,6 +129,7 @@ def reghio():
     else:
         return render_template("register_hio.html")
 
+# for registering lower official
 @app.route('/regloo',methods=['GET', 'POST'])
 def regloo():
     if request.method == 'POST':
@@ -157,6 +150,7 @@ def regloo():
     else:
         return render_template("register_loo.html")
 
+# for removing higher official
 @app.route('/remhio',methods=['GET', 'POST'])
 def remhio():
     if request.method == 'POST':
@@ -170,6 +164,7 @@ def remhio():
     else:
         return render_template("remove_hio.html")
 
+# for removing lower official
 @app.route('/remloo',methods=['GET', 'POST'])
 def remloo():
     if request.method == 'POST':
@@ -183,7 +178,7 @@ def remloo():
     else:
         return render_template("remove_loo.html")
 
-
+# for changing password for higher official
 @app.route('/hio_changepasss',methods=['GET', 'POST'])
 def hio_changepasss():
     global higher_credentials
@@ -199,7 +194,7 @@ def hio_changepasss():
     else:
         return render_template("change_hio_pass.html")
 
-
+# for changing password for lower official
 @app.route('/loo_changepasss',methods=['GET', 'POST'])
 def loo_changepasss():
     global lower_credentials
@@ -215,7 +210,7 @@ def loo_changepasss():
     else:
         return render_template("change_loo_pass.html")
 
-
+# for adding new case
 @app.route('/add_case', methods=['GET', 'POST'])
 def add_case():
     if request.method == 'POST':
@@ -256,7 +251,7 @@ def download(file_id):
     file_data = fs.get(ObjectId(file_id))
     return send_file(file_data, download_name=file_data.filename, as_attachment=True)
 
-
+# for viewing existing case
 @app.route('/view', methods=['GET', 'POST'])
 def view():
     case_data = None
@@ -378,8 +373,7 @@ def download_pdf(case_number):
         mimetype='application/pdf'
     )
 
-
-
+# for generating case pdf
 def create_case_pdf(case_data):
     """
     Generate a PDF for the given case data.
@@ -446,15 +440,9 @@ def create_case_pdf(case_data):
     buffer.seek(0)
     return buffer
 
+# email sending for edit case
 def send_email_with_attachment(recipient_email, subject, body, pdf1,pdf2, pr_name,up_name):
-    """
-    Send an email with the provided PDF as an attachment using Gmail.
-    :param recipient_email: Email address of the recipient.
-    :param subject: Email subject.
-    :param body: Email body text.
-    :param pdf1: BytesIO object containing the PDF.
-    :param pr_name: Name of the PDF attachment.
-    """
+
     try:
         # Set up the SMTP server
         server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
@@ -493,24 +481,7 @@ def send_email_with_attachment(recipient_email, subject, body, pdf1,pdf2, pr_nam
     except Exception as e:
         print(f"Failed to send email: {e}")
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# for edit the existing case
 @app.route('/edit_case', methods=['GET', 'POST'])
 def edit_case():
     if request.method == 'POST':
@@ -574,8 +545,6 @@ def edit_case():
 
     return render_template('edit_case.html')
 
-
-
 @app.route('/fetch_case/<case_number>', methods=['GET'])
 def fetch_case(case_number):
     """Fetch case details by case number."""
@@ -612,17 +581,9 @@ def downloadd(file_id):
 
     return Response(file_data.read(), content_type=content_type)
 
-
-
+# for sending email for removing case
 def send_email(recipient_email, subject, body, pdf1, pr_name,):
-    """
-    Send an email with the provided PDF as an attachment using Gmail.
-    :param recipient_email: Email address of the recipient.
-    :param subject: Email subject.
-    :param body: Email body text.
-    :param pdf1: BytesIO object containing the PDF.
-    :param pr_name: Name of the PDF attachment.
-    """
+    
     try:
         # Set up the SMTP server
         server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
@@ -654,9 +615,7 @@ def send_email(recipient_email, subject, body, pdf1, pr_name,):
     except Exception as e:
         print(f"Failed to send email: {e}")
 
-
-
-
+# for removing existing case
 @app.route('/removecase',methods=['GET', 'POST'])
 def removecase():
     if request.method == 'POST':
@@ -672,8 +631,6 @@ def removecase():
             pr_name = f"case_{case_no}_details.pdf"
             send_email(recipient_email, subject, body, pdf1, pr_name)
 
-
-
             collection.delete_one({'case_number': case_no})
             return render_template("remove_case.html",msg=f"{case_no} has been removed successfully")
         else:
@@ -686,4 +643,8 @@ def removecase():
 
 
 
-app.run(debug=True)
+
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
