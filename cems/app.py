@@ -64,11 +64,6 @@ def home():
         return render_template("about.html")
 
 
-@app.route('/hlogin',methods=['GET', 'POST'])
-def hlogin():
-    return render_template('higher_login.html')
-@app.route('/llogin',methods=['GET', 'POST'])
-def llogin():
     return render_template('lower_login.html')
 @app.route('/higher_login',methods=['GET', 'POST'])
 def higher_login():
