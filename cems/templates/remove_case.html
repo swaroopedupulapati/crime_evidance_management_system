@@ -1,10 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <style>
+        body{
+            background-color: black;
+        }
+        .remove{
+            float: left;
+                width:30vw;
+                background-color:rgb(91, 88, 88);
+                margin-left: 32vw;
+                margin-top:10vw ;
+                border-radius: 10vw;
+                padding-top: 5vw;
+                padding-bottom: 5vw;             
+                color: white;
+        }
+        input,button{
+                width: 20vw;
+                margin-left: 5vw;
+                margin-top: 2vw;
+        }
+
+    </style>
 </head>
 <body>
-    <div>
-        {{msg}}
+    <div class="remove">
+        <h1 style="text-align:center">Remove Case</h1>
+        <h4 style="text-align:center">{{msg}}</h4>
         <form action="" method="post">
             <input type="text"name="case_no" placeholder="Enter_case_no">
             <input type="text" name="rcase_no" placeholder="Re_enter_case_no">
