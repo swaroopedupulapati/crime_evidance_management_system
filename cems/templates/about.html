@@ -41,9 +41,14 @@
         <h1></h1>
         <p>This system allows higher and lower officials to securely log in and manage their operations efficiently. 
            Our platform ensures data integrity and provides a seamless experience for users.</p>
-        <button onclick="window.location.href='/hlogin'">Higher Login</button>
-        <button onclick="window.location.href='/llogin'">Lower Login</button>
-
+           <form action="/" method="post">
+                <select name="login" required>
+                        <option value="" disabled selected>Select role to login</option>
+                        <option value="hlogin">Higher-login</option>
+                        <option value="llogin"><a href="/llogin"></a>Lower-login</option>
+                </select>
+                <button type="submit">Login</button>
+           </form>
     </div>
 </body>
 </html>

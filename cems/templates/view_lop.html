@@ -20,8 +20,10 @@
     <body>
         <div class="details">
             {% for label, data in profile.items() %}
-                <h1>{{label}}:</h1><br>
-                {{data}}<br><br>
+                {% if label != "password" %}
+                    <h1>{{ label }}:</h1><br>
+                    {{ data }}<br><br>
+                {% endif %}
             {% endfor %}
         </div>
         

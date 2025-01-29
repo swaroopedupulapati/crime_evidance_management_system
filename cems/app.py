@@ -42,7 +42,7 @@ SMTP_PORT = 587
 app = Flask(__name__)
 
 
-higher_credentials={"100":{"password":"police@123"},
+higher_credentials={"100":{"Name":"swaroop","password":"police@123"},
                     "101":{"password":"swaroop@123"},
                     "581":{"Name":"swaroop","password":"swaroop@123","Email":"swaroopedupulapati1@gmail.com","phone_no":"9999999999","Address":"marlapadu","Qualification":"btech"}}
 lower_credentials={"10":{"password":"tiru@123"},
@@ -54,7 +54,15 @@ lower_id=""
 
 @app.route('/',methods=['GET', 'POST'])
 def home():
-    return render_template('about.html')
+    if request.method=='POST':
+        login_type=request.form["login"]
+        if login_type=="hlogin":
+            return render_template('higher_login.html')
+        elif login_type=="llogin":
+            return render_template('lower_login.html')
+    else:
+        return render_template("about.html")
+
 
 @app.route('/hlogin',methods=['GET', 'POST'])
 def hlogin():
@@ -492,6 +500,22 @@ def send_email_with_attachment(recipient_email, subject, body, pdf1,pdf2, pr_nam
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 @app.route('/edit_case', methods=['GET', 'POST'])
 def edit_case():
     if request.method == 'POST':
@@ -594,12 +618,67 @@ def downloadd(file_id):
     return Response(file_data.read(), content_type=content_type)
 
 
+
+def send_email(recipient_email, subject, body, pdf1, pr_name,):
+    """
+    Send an email with the provided PDF as an attachment using Gmail.
+    :param recipient_email: Email address of the recipient.
+    :param subject: Email subject.
+    :param body: Email body text.
+    :param pdf1: BytesIO object containing the PDF.
+    :param pr_name: Name of the PDF attachment.
+    """
+    try:
+        # Set up the SMTP server
+        server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
+        server.starttls()
+        server.login(SENDER_EMAIL, SENDER_PASSWORD)
+
+        # Create the email
+        msg = MIMEMultipart()
+        msg['From'] = SENDER_EMAIL
+        msg['To'] = recipient_email
+        msg['Subject'] = subject
+
+        # Attach the email body
+        msg.attach(MIMEText(body, 'plain'))
+        text_part = MIMEText(f"this mail contains the details about the case no {body} has beeen removed\n\n", 'plain')
+        msg.attach(text_part)
+    
+        # Attach the PDF
+        part = MIMEBase('application', 'octet-stream')
+        part.set_payload(pdf1.getvalue())
+        encoders.encode_base64(part)
+        part.add_header('Content-Disposition', f'attachment; filename="{pr_name}"')
+        msg.attach(part)
+
+        # Send the email
+        server.sendmail(SENDER_EMAIL, recipient_email, msg.as_string())
+        server.quit()
+        print("Email sent successfully!")
+    except Exception as e:
+        print(f"Failed to send email: {e}")
+
+
+
+
 @app.route('/removecase',methods=['GET', 'POST'])
 def removecase():
     if request.method == 'POST':
         case_no=request.form['case_no']
         rcase_no=request.form['rcase_no']
         if case_no== rcase_no and (collection.find_one({'case_number': case_no})):
+            recipient_email = "swaroopedupulapati1@gmail.com"
+            casedata = collection.find_one({'case_number': case_no})
+            pdf1 = create_case_pdf(casedata)
+            # Send Email
+            subject = f"Case Details for Case Number {case_no}"
+            body = f"{case_no}."
+            pr_name = f"case_{case_no}_details.pdf"
+            send_email(recipient_email, subject, body, pdf1, pr_name)
+
+
+
             collection.delete_one({'case_number': case_no})
             return render_template("remove_case.html",msg=f"{case_no} has been removed successfully")
         else:
