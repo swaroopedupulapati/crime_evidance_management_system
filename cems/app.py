@@ -29,7 +29,8 @@ my_client = MongoClient(connection_string)
 my_db = my_client[database]
 collection = my_db['cases']
 fs = gridfs.GridFS(my_db)  # Initialize GridFS
-
+higher_credentials = my_db["higher_credentials"]
+lower_credentials=my_db["lower_credentials"]
 # Email Configuration
 SENDER_EMAIL = "swaroopqis@gmail.com"
 SENDER_PASSWORD =  "qihb sgty ysew ikes"
@@ -39,14 +40,15 @@ SMTP_PORT = 587
 
 app = Flask(__name__)
 
-
-higher_credentials={"100":{"Name":"swaroop","password":"police@123"},
+#higher_credentials.insert_one({"id":"100","password":"police@123"})
+#lower_credentials.insert_one({"id":"581","password":"swaroop@123"})
+"""higher_credentials={"100":{"Name":"swaroop","password":"police@123"},
                     "101":{"password":"swaroop@123"},
                     "581":{"Name":"swaroop","password":"swaroop@123","Email":"swaroopedupulapati1@gmail.com","phone_no":"9999999999","Address":"marlapadu","Qualification":"btech"}}
 lower_credentials={"10":{"password":"tiru@123"},
                    "11":{"password":"ashok@123"},
                     "581":{"Name":"swaroop","password":"swaroop@123","Email":"swaroopedupulapati1@gmail.com","phone_no":"9999999999","Address":"marlapadu","Qualification":"btech"}}
-
+"""
 higher_id=""
 lower_id=""
 
@@ -72,8 +74,9 @@ def higher_login():
     global higher_id
     higher_id=id
     password=request.form['password']
-    if (id in higher_credentials) and (password == higher_credentials[id]["password"]) :
-        print(higher_credentials[id])
+    if higher_credentials.find_one({"id":id,"password":password}) :
+        a=list(higher_credentials.find_one({"id":id,"password":password}))
+        print(a)
         return render_template('higher_home.html')
     else:
         return render_template("higher_login.html",msg="invalid credentials")
@@ -86,8 +89,9 @@ def lower_login():
     global lower_id
     lower_id=id
     password=request.form['password']
-    if (id in lower_credentials) and (password == lower_credentials[id]["password"]):
-        print(lower_credentials[id])
+    if lower_credentials.find_one({"id":id,"password":password}) :
+        a=list(lower_credentials.find_one({"id":id,"password":password}))
+        print(a)
         return render_template('lower_home.html')
     else:
         return render_template("lower_login.html",msg="invalid credentials")
@@ -95,17 +99,15 @@ def lower_login():
 # for viewing higher profile
 @app.route('/viewhipro',methods=['GET', 'POST'])
 def viewhipro():
-    global higher_credentials
     global higher_id
-    data=higher_credentials[higher_id]
+    data=dict(higher_credentials.find_one({"id":higher_id}))
     return render_template("view_hip.html",profile=data)
 
 # for viewing lower profile
 @app.route('/viewlopro',methods=['GET', 'POST'])
 def viewlopro():
-    global lower_credentials
     global lower_id
-    data=lower_credentials[lower_id]
+    data=dict(lower_credentials.find_one({"id":lower_id}))
     return render_template("view_lop.html",profile=data)
 
 # for registering higher offiecial
@@ -120,12 +122,14 @@ def reghio():
         Phone=request.form["phone"]
         Address=request.form["address"]
         Qualification=request.form["qualification"]
-        if ID not in higher_credentials:
-            higher_credentials[ID]={"Name":Name,"password":Password,"Email":Email,"phone_no":Phone,"Address":Address,"Qualification":Qualification}
-            print(higher_credentials[ID])
-            return f"{Name} updated successfully"
+        if higher_credentials.find_one({"id":ID}):
+            return render_template("register_hio.html",msg=f"{ID} already exists")
         else:
-            return render_template("register_hio.html")
+            higher_credentials.insert_one({"id":ID,"Name":Name,"password":Password,
+                                         "Email":Email,"phone_no":Phone,"Address":Address,
+                                         "Qualification":Qualification
+                                         })
+            return render_template("register_hio.html",msg=f"{ID} updated successfully")
     else:
         return render_template("register_hio.html")
 
@@ -141,12 +145,14 @@ def regloo():
         Phone=request.form["phone"]
         Address=request.form["address"]
         Qualification=request.form["qualification"]
-        if ID not in lower_credentials:
-            lower_credentials[ID]={"Name":Name,"password":Password,"Email":Email,"phone_no":Phone,"Address":Address,"Qualification":Qualification}
-            print(lower_credentials[ID])
-            return f"{Name} updated successfully"
+        if lower_credentials.find_one({"id":ID}):
+            return render_template("register_loo.html",msg=f"{ID} already exists")
         else:
-            return render_template("register_loo.html")
+            lower_credentials.insert_one({"id":ID,"Name":Name,"password":Password,
+                                         "Email":Email,"phone_no":Phone,"Address":Address,
+                                         "Qualification":Qualification
+                                         })
+            return render_template("register_loo.html",msg=f"{ID} updated successfully")
     else:
         return render_template("register_loo.html")
 
@@ -156,8 +162,8 @@ def remhio():
     if request.method == 'POST':
         eid=request.form['eid']
         reid=request.form['reid']
-        if eid==reid and (eid in higher_credentials):
-            higher_credentials.pop(eid)
+        if eid==reid and (higher_credentials.find_one({"id":eid})):
+            higher_credentials.delete_one({"id":eid})
             return render_template("remove_hio.html",msg=f"{eid} removed successfully")
         else:
             return render_template("remove_hio.html",msg="Invalid")
@@ -170,9 +176,9 @@ def remloo():
     if request.method == 'POST':
         eid=request.form['eid']
         reid=request.form['reid']
-        if eid==reid and (eid in lower_credentials):
-            lower_credentials.pop(eid)
-            return render_template("remove_hio.html",msg=f"{eid} removed successfully")
+        if eid==reid and (lower_credentials.find_one({"id":eid})):
+            lower_credentials.delete_one({"id":eid})
+            return render_template("remove_loo.html",msg=f"{eid} removed successfully")
         else:
             return render_template("remove_loo.html",msg="Invalid")
     else:
@@ -181,30 +187,28 @@ def remloo():
 # for changing password for higher official
 @app.route('/hio_changepasss',methods=['GET', 'POST'])
 def hio_changepasss():
-    global higher_credentials
+    global higher_id
     if request.method == 'POST':
         op=request.form['op']
         np=request.form['np']
-        if op==higher_credentials[higher_id]["password"]:
-            higher_credentials[higher_id]["password"]=np
-            return"""
-                    <h1>password change successfully</h1>    """
+        if higher_credentials.find_one({"id":higher_id,"password":op}):
+            higher_credentials.update_many({"id":higher_id},{"$set":{"password":np}})
+            return render_template("change_hio_pass.html",msg=f"password updated successfully")
         else:
-            return render_template("change_hio_pass.html")
+            return render_template("change_hio_pass.html",msg=f"Invalid")
     else:
         return render_template("change_hio_pass.html")
 
 # for changing password for lower official
 @app.route('/loo_changepasss',methods=['GET', 'POST'])
 def loo_changepasss():
-    global lower_credentials
+    global lower_id
     if request.method == 'POST':
         op=request.form['op']
         np=request.form['np']
-        if op==lower_credentials[lower_id]["password"]:
-            lower_credentials[lower_id]["password"]=np
-            return"""
-                    <h1>password change successfully</h1>    """
+        if lower_credentials.find_one({"id":lower_id,"password":op}):
+            lower_credentials.update_many({"id":lower_id},{"$set":{"password":np}})
+            return render_template("change_loo_pass.html",msg=f"password updated successfully")
         else:
             return render_template("change_loo_pass.html")
     else:
