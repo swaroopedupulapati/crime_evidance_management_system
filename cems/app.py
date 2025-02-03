@@ -42,13 +42,6 @@ app = Flask(__name__)
 
 #higher_credentials.insert_one({"id":"100","password":"police@123"})
 #lower_credentials.insert_one({"id":"581","password":"swaroop@123"})
-"""higher_credentials={"100":{"Name":"swaroop","password":"police@123"},
-                    "101":{"password":"swaroop@123"},
-                    "581":{"Name":"swaroop","password":"swaroop@123","Email":"swaroopedupulapati1@gmail.com","phone_no":"9999999999","Address":"marlapadu","Qualification":"btech"}}
-lower_credentials={"10":{"password":"tiru@123"},
-                   "11":{"password":"ashok@123"},
-                    "581":{"Name":"swaroop","password":"swaroop@123","Email":"swaroopedupulapati1@gmail.com","phone_no":"9999999999","Address":"marlapadu","Qualification":"btech"}}
-"""
 higher_id=""
 lower_id=""
 
