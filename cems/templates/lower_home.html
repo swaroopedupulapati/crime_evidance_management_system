@@ -1,29 +1,53 @@
 <html>
     <head>
         <style>
-            body{
-                background-color:black;
+            body {
+                background-color: #1A1A2E; /* Dark Blue Background */
+                color: #FFFFFF; /* White Text */
+                font-family: Arial, sans-serif;
+                text-align: center;
+                padding: 20px;
             }
+    
+            h1 {
+                font-size: 3.5em;
+                margin-bottom: 20px;
+                color: #D72638; /* Blood Red */
+            }
+    
             button {
-                width:20vw;
-                height:15vw;
-                margin: 1vw 2vw 1vw 2vw;
-                background-color:rgb(91, 88, 88);
-                color: white;
-                font-weight:bold;
-                font-size:1.5vw;
-                border-radius: 10vw;
+                background-color: #D72638; /* Metallic Gray Background */
+                color: #FFFFFF; /* White Text */
+                border: 2px solid #D72638; /* Blood Red Border */
+                border-radius: 20px;
+                padding: 50px 50px 50px 50px; /* Increased padding */
+                font-size: 1.75em; /* Larger font size */
+                margin: 15px; /* More spacing between buttons */
+                cursor: pointer;
+                transition: transform 0.2s, background-color 0.3s;
+            }
+    
+            button:hover {
+                background-color: #A30000; /* Blood Red Hover */
+                color: #1A1A2E; /* Dark Blue Text */
+                box-shadow: 5px#D72638;
+                transform: scale(1.05);
+            }
+    
+            button:active {
+                transform: scale(1);
             }
         </style>
     </head>
     <body>
+        <h1>Lower Home</h1>
         <button onclick="window.location.href='/viewlopro'">View profile</button>
 
         <button onclick="window.location.href='/view'">view case</button>
         <button onclick="window.location.href='/add_case'">Enter new case</button>
         <button onclick="window.location.href='/regloo'">register new lower_official</button>
         <button onclick="window.location.href='/loo_changepasss'">change password</button>
-        <button onclick="window.location.href='/autregister'">spare button dont click it</button>
+        <button >spare button dont click it</button>
 
     </body>
 </html>

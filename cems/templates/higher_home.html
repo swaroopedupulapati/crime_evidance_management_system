@@ -4,34 +4,56 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Higher Home</title>
     <style>
-        body{
-            background-color:black;
+        body {
+            background-color: #1A1A2E; /* Dark Blue Background */
+            color: #FFFFFF; /* White Text */
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
         }
+
+        h1 {
+            font-size: 3.5em;
+            margin-bottom: 20px;
+            color: #D72638; /* Blood Red */
+        }
+
         button {
-            width:20vw;
-            height:15vw;
-            margin: 1vw 2vw 1vw 2vw;
-            background-color:rgb(91, 88, 88);
-            color: white;
-            font-weight:bold;
-            font-size:1.5vw;
-            border-radius: 10vw;
+            background-color: #D72638; /* Metallic Gray Background */
+            color: #FFFFFF; /* White Text */
+            border: 2px solid #D72638; /* Blood Red Border */
+            border-radius: 20px;
+            padding: 40px 40px 40px 40px; /* Increased padding */
+            font-size: 1.75em; /* Larger font size */
+            margin: 15px; /* More spacing between buttons */
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #A30000; /* Blood Red Hover */
+            color: #1A1A2E; /* Dark Blue Text */
+            box-shadow: 5px#D72638;
+            transform: scale(1.05);
+        }
+
+        button:active {
+            transform: scale(1);
         }
     </style>
-    </head>
-    <body>
-        <h1>Higher Home</h1><br>
-        
-        <button onclick="window.location.href='/viewhipro'">View profile</button>
-        <button onclick="window.location.href='/view'">View case</button>
-        <button onclick="window.location.href='/add_case'">Add new case</button>
-        <button onclick="window.location.href='/edit_case'">Edit case</button>
-        <button onclick="window.location.href='/removecase'">Remove case</button>
-        <button onclick="window.location.href='/reghio'">Register new higher_official</button>
-        <button onclick="window.location.href='/regloo'">Register new lower_official</button>
-        <button onclick="window.location.href='/remhio'">Remove higher_official</button>
-        <button onclick="window.location.href='/remloo'">Remove lower_official</button>
-        <button onclick="window.location.href='/hio_changepasss'">Change password</button>
-
-    </body>
+</head>
+<body>
+    <h1>Higher Home</h1><br>
+    
+    <button onclick="window.location.href='/viewhipro'">View Profile</button>
+    <button onclick="window.location.href='/view'">View Case</button>
+    <button onclick="window.location.href='/add_case'">Add New Case</button>
+    <button onclick="window.location.href='/edit_case'">Edit Case</button>
+    <button onclick="window.location.href='/removecase'">Remove Case</button>
+    <button onclick="window.location.href='/reghio'">Register Higher Official</button>
+    <button onclick="window.location.href='/regloo'">Register Lower Official</button>
+    <button onclick="window.location.href='/remhio'">Remove Higher Official</button>
+    <button onclick="window.location.href='/remloo'">Remove Lower Official</button>
+    <button onclick="window.location.href='/hio_changepasss'">Change Password</button>
+</body>
 </html>
