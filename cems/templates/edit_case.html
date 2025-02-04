@@ -6,54 +6,65 @@
     <title>Modify Case Details</title>
     <style>
         body {
+            background-color: #1A1A2E;
+            color: #FFFFFF;
             font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: black;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            overflow-y: auto; 
+        }
+        .edit{
+            background: #121212;
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
+                text-align: center;
+                width: 90vh;/* Enables scrolling inside form */
+        
+        }
+        h1 {
+            color: #D72638;
+            text-align: center;
+        }
+        
+        label {
+            float: left;
+            font-weight: bold;
             color: white;
         }
-        .detail {
-            margin-bottom: 20px;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            background-color: transparent;
-        }
-        .label {
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        .file-preview {
-            margin-top: 10px;
-            border: 1px solid #ddd;
+        input[type="text"] {
+            width: 100%;
             padding: 10px;
+            margin: 5px 0 10px;
+            background: #333;
+            border: 1px solid #444;
             border-radius: 5px;
-            background-color: #f4f4f4;
-            max-height: 200px;
-            overflow-y: auto;
-            color: black;
+            color: #FFFFFF;
         }
         button {
-            margin-top: 10px;
-            padding: 8px 15px;
-            background-color: #4CAF50;
-            color: white;
+            width: 100%;
+            padding: 10px;
+            margin-top: 15px;
             border: none;
             border-radius: 5px;
+            font-size: 16px;
+            background: #D72638;
+            color: #FFFFFF;
             cursor: pointer;
+            transition: 0.3s;
         }
         button:hover {
-            background-color: #45a049;
+            background: #A30000;
         }
-        .remove-btn {
-            background-color: #f44336;
-        }
-        .remove-btn:hover {
-            background-color: #e53935;
-        }
-        form {
-            background-color: rgb(91, 88, 88);
-            padding: 2vw 3vw 2vw 3vw;
-            border-radius: 2vw;
+        .detail {
+            background: #222;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
         }
     </style>
     <script>
@@ -198,19 +209,21 @@
         }
     </script>
 </head>
-<body>
-    <h1>Modify Case Details</h1>
-    <form method="POST" action="/edit_case" enctype="multipart/form-data">
-        <label for="case_number">Case Number:</label>
-        <input type="text" id="case_number" name="case_number" required>
-        <button type="button" onclick="fetchCaseDetails()">Search Case</button><br><br>
+    <body>
+        <div class="edit">
+            <h1>Modify Case Details</h1>
+            <form method="POST" action="/edit_case" enctype="multipart/form-data">
+                <label for="case_number">Case Number:</label>
+                <input type="text" id="case_number" name="case_number" required>
+                <button type="button" onclick="fetchCaseDetails()">Search Case</button><br><br>
 
-        <div id="detailsContainer">
-            <!-- Dynamic details will appear here -->
-        </div>
+                <div id="detailsContainer">
+                    <!-- Dynamic details will appear here -->
+                </div>
 
-        <button type="button" onclick="addDetail()">Add Detail</button><br><br>
-        <button type="submit">Submit</button>
-    </form>
-</body>
+                <button type="button" onclick="addDetail()">Add Detail</button><br><br>
+                <button type="submit">Submit</button>
+            </form>
+            </div>
+    </body>
 </html>
