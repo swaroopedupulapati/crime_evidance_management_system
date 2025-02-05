@@ -20,7 +20,7 @@
                 color: #FFFFFF; /* White Text */
                 border: 2px solid #D72638; /* Blood Red Border */
                 border-radius: 20px;
-                padding: 50px 50px 50px 50px; /* Increased padding */
+                padding: 40px 40px 40px 40px; /* Increased padding */
                 font-size: 1.75em; /* Larger font size */
                 margin: 15px; /* More spacing between buttons */
                 cursor: pointer;
@@ -37,17 +37,40 @@
             button:active {
                 transform: scale(1);
             }
+            img{
+                height: 150px;
+                width: 250px;
+                background-color: #D72638;
+                border-radius: 20px;
+            }
         </style>
     </head>
     <body>
         <h1>Lower Home</h1>
-        <button onclick="window.location.href='/viewlopro'">View profile</button>
-
-        <button onclick="window.location.href='/view'">view case</button>
-        <button onclick="window.location.href='/add_case'">Enter new case</button>
-        <button onclick="window.location.href='/regloo'">register new lower_official</button>
-        <button onclick="window.location.href='/loo_changepasss'">change password</button>
-        <button >spare button dont click it</button>
+        <button onclick="window.location.href='/viewlopro'">
+            <img src="../static/profile.png"><br>
+            View profile
+        </button>
+        <button onclick="window.location.href='/view'">
+            <img src="../static/view_case.png"><br>
+            view case
+        </button>
+        <button onclick="window.location.href='/add_case'">
+            <img src="../static/add_case.png"><br>
+            Add new case
+        </button>
+        <button onclick="window.location.href='/regloo'">
+            <img src="../static/add_lower.png"><br>
+            register new lower_official
+        </button>
+        <button onclick="window.location.href='/loo_changepasss'">
+            <img src="../static/change_password.png"><br>
+            change password
+        </button>
+        <button >
+            <img src=""><br>
+            spare button dont click it
+        </button>
 
     </body>
 </html>
