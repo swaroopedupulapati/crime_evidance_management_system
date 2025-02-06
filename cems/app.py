@@ -42,7 +42,8 @@ if higher_credentials.find():
     pass
 else:
     higher_credentials.insert_one({"id":"100","Name":"Police","password":"police@123",
-                                    "Email":"police@gmail.com","phone_no":"100","Address":"Police station",
+                                    "Email":"police@gmail.com","phone_no":"100",
+                                    "Address":"Police station",
                                     "Qualification":"distinsion"
                                  })
 
@@ -141,7 +142,9 @@ def reghio():
                     # Attach the email body
                 head=MIMEText(f"Your successfully registerd in \n Crime evidence Management system", 'plain')
                 msg.attach(head)
-                text_part = MIMEText(f"\nyour credentials\n ID:{ID}\n Name:{Name}\n Password:{Password}\n Email:{Email}\n Phone:{Phone}\n Address:{Address}\nQualification:{Qualification}", 'plain')
+                text_part = MIMEText(f"\nyour credentials\n ID:{ID}\n 
+                                     Name:{Name}\n Password:{Password}\n Email:{Email}\n 
+                                     Phone:{Phone}\n Address:{Address}\nQualification:{Qualification}", 'plain')
                 msg.attach(text_part)
                     # Send the email
                 server.sendmail(SENDER_EMAIL, Email, msg.as_string())
