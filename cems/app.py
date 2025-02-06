@@ -47,11 +47,8 @@ else:
                                     "Qualification":"distinsion"
                                  })
 
-#higher_credentials.insert_one({"id":"100","password":"police@123"})
-#lower_credentials.insert_one({"id":"581","password":"swaroop@123"})
 higher_id=""
 lower_id=""
-
 
 # home
 @app.route('/',methods=['GET', 'POST'])
