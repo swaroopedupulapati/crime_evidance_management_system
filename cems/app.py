@@ -142,9 +142,9 @@ def reghio():
                     # Attach the email body
                 head=MIMEText(f"Your successfully registerd in \n Crime evidence Management system", 'plain')
                 msg.attach(head)
-                text_part = MIMEText(f"\nyour credentials\n ID:{ID}\n 
+                text_part = MIMEText(f"""\nyour credentials\n ID:{ID}\n 
                                      Name:{Name}\n Password:{Password}\n Email:{Email}\n 
-                                     Phone:{Phone}\n Address:{Address}\nQualification:{Qualification}", 'plain')
+                                     Phone:{Phone}\n Address:{Address}\nQualification:{Qualification}""", 'plain')
                 msg.attach(text_part)
                     # Send the email
                 server.sendmail(SENDER_EMAIL, Email, msg.as_string())
@@ -188,9 +188,9 @@ def regloo():
                     # Attach the email body
                 head=MIMEText(f"Your successfully registerd in \n Crime evidence Management system", 'plain')
                 msg.attach(head)
-                text_part = MIMEText(f"\nyour credentials\n ID:{ID}\n Name:{Name}\n Password:{Password}\n 
+                text_part = MIMEText(f"""\nyour credentials\n ID:{ID}\n Name:{Name}\n Password:{Password}\n 
                                      Email:{Email}\n Phone:{Phone}\n Address:{Address}\n 
-                                     Qualification:{Qualification}", 'plain')
+                                     Qualification:{Qualification}""", 'plain')
                 msg.attach(text_part)
                     # Send the email
                 server.sendmail(SENDER_EMAIL, Email, msg.as_string())
