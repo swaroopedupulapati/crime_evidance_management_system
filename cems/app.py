@@ -15,8 +15,6 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
 from email.mime.text import MIMEText
 from email import encoders
-
-
 # MongoDB Configuration
 host = "ocdb.app"
 port = 5050
@@ -39,6 +37,14 @@ SMTP_PORT = 587
 
 
 app = Flask(__name__)
+
+if higher_credentials.find():
+    pass
+else:
+    higher_credentials.insert_one({"id":"100","Name":"Police","password":"police@123",
+                                    "Email":"police@gmail.com","phone_no":"100","Address":"Police station",
+                                    "Qualification":"distinsion"
+                                 })
 
 #higher_credentials.insert_one({"id":"100","password":"police@123"})
 #lower_credentials.insert_one({"id":"581","password":"swaroop@123"})
@@ -218,28 +224,30 @@ def add_case():
         labels = request.form.getlist('label[]')
         texts = request.form.getlist('data_text[]')
         files = request.files.getlist('data_file[]')
-
-        # Store case details
-        case_details = []
-        for i in range(len(labels)):
-            detail = {'label': labels[i], 'data': texts[i] if texts[i] else None}
+        if case_number :
+            # Store case details
+            case_details = []
+            for i in range(len(labels)):
+                detail = {'label': labels[i], 'data': texts[i] if texts[i] else None}
+                
+                # Store file in GridFS if uploaded
+                if files[i] and files[i].filename:
+                    file_id = fs.put(files[i], filename=files[i].filename)
+                    detail['file_id'] = str(file_id)  # Store file ID in MongoDB
+                
+                case_details.append(detail)
             
-            # Store file in GridFS if uploaded
-            if files[i] and files[i].filename:
-                file_id = fs.put(files[i], filename=files[i].filename)
-                detail['file_id'] = str(file_id)  # Store file ID in MongoDB
-            
-            case_details.append(detail)
-        
-        # Insert case data into MongoDB
-        case_data = {
-            'case_number': case_number,
-            'details': case_details
-        }
-        collection.insert_one(case_data)
-        return "Case details and files have been successfully submitted!"
-    
-    return render_template('add_case.html')
+            # Insert case data into MongoDB
+            case_data = {
+                'case_number': case_number,
+                'details': case_details
+            }
+            collection.insert_one(case_data)
+            return render_template("add_case.html",msg=f"case added successfully")
+        else:
+            return render_template("add_case.html",msg=f"Invalid")
+    else:
+        return render_template('add_case.html')
 
 
 @app.route('/download/<file_id>')
@@ -284,8 +292,7 @@ def view():
 
             file_contents = case_details_with_files
         else:
-            # return render_template("view_case.html",msg="not occur")
-            return flash(jsonify({'error': 'Case not found'}), 404)
+            return render_template("view_case.html",msg="not occur")
     return render_template('view_case.html', case_data=case_data, file_contents=file_contents)
 
 
@@ -488,59 +495,61 @@ def edit_case():
         files = request.files.getlist('data_file[]')
 
         # Fetch the existing case details
-        existing_case = collection.find_one({'case_number': case_number})
-        existing_details = existing_case['details'] if existing_case else []
+        if collection.find_one({'case_number': case_number}):
+            existing_case = collection.find_one({'case_number': case_number})
+            existing_details = existing_case['details'] if existing_case else []
 
-        # Create a dictionary of existing file mappings for quick lookup
-        existing_files = {detail['label']: detail.get('file_id') for detail in existing_details}
+            # Create a dictionary of existing file mappings for quick lookup
+            existing_files = {detail['label']: detail.get('file_id') for detail in existing_details}
 
-        # Prepare new case details
-        case_details = []
-        for i in range(len(labels)):
-            label = labels[i]
-            text = texts[i] if texts[i] else None
-            file = files[i]
+            # Prepare new case details
+            case_details = []
+            for i in range(len(labels)):
+                label = labels[i]
+                text = texts[i] if texts[i] else None
+                file = files[i]
 
-            detail = {'label': label, 'data': text}
+                detail = {'label': label, 'data': text}
 
-            # Check if a new file is uploaded
-            if file and file.filename:
-                # Upload new file to GridFS
-                file_id = fs.put(file, filename=file.filename)
-                detail['file_id'] = str(file_id)
-            else:
-                # Retain existing file ID if no new file is uploaded
-                if label in existing_files:
-                    detail['file_id'] = existing_files[label]
+                # Check if a new file is uploaded
+                if file and file.filename:
+                    # Upload new file to GridFS
+                    file_id = fs.put(file, filename=file.filename)
+                    detail['file_id'] = str(file_id)
+                else:
+                    # Retain existing file ID if no new file is uploaded
+                    if label in existing_files:
+                        detail['file_id'] = existing_files[label]
 
-            case_details.append(detail)
-        recipient_email = "swaroopedupulapati1@gmail.com"
-        casedata = collection.find_one({'case_number': case_number})
-        pdf1 = create_case_pdf(casedata)
-
-
-        # Update the case in MongoDB
-        collection.update_one(
-            {'case_number': case_number},
-            {'$set': {'details': case_details}},
-            upsert=True
-        )
-        case_data = collection.find_one({'case_number': case_number})
-        pdf2=create_case_pdf(case_data)
+                case_details.append(detail)
+            recipient_email = "swaroopedupulapati1@gmail.com"
+            casedata = collection.find_one({'case_number': case_number})
+            pdf1 = create_case_pdf(casedata)
 
 
-        
-        # Send Email
-        subject = f"Case Details for Case Number {case_number}"
-        body = f"{case_number}."
-        pr_name = f"case_{case_number}_details.pdf"
-        up_name= f"case_{case_number}_updated_details.pdf"
-        send_email_with_attachment(recipient_email, subject, body, pdf1,pdf2, pr_name,up_name)
+            # Update the case in MongoDB
+            collection.update_one(
+                {'case_number': case_number},
+                {'$set': {'details': case_details}},
+                upsert=True
+            )
+            case_data = collection.find_one({'case_number': case_number})
+            pdf2=create_case_pdf(case_data)
 
 
-        return "Case details have been successfully updated!"
+            
+            # Send Email
+            subject = f"Case Details for Case Number {case_number}"
+            body = f"{case_number}."
+            pr_name = f"case_{case_number}_details.pdf"
+            up_name= f"case_{case_number}_updated_details.pdf"
+            send_email_with_attachment(recipient_email, subject, body, pdf1,pdf2, pr_name,up_name)
 
-    return render_template('edit_case.html')
+            return render_template("edit_case.html",msg=f"case details updated successsfully")
+        else:            
+            return render_template("edit_case.html",msg=f"Invalid")
+    else:
+        return render_template('edit_case.html')
 
 @app.route('/fetch_case/<case_number>', methods=['GET'])
 def fetch_case(case_number):

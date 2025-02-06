@@ -31,6 +31,9 @@
             color: #D72638;
             text-align: center;
         }
+        h4 {
+                color: #FFD700;
+            }
         label {
             float: left;
             font-weight: bold;
@@ -145,6 +148,8 @@
 <body>
     <div class="add">
         <h1>Enter Case Details</h1>
+        <h4 style="text-align:center">{{msg}}</h4>
+
         <form method="POST" action="/add_case" enctype="multipart/form-data">
             <label for="case_number">Case Number:</label>
             <input type="text" id="case_number" name="case_number" required><br><br>
