@@ -687,7 +687,7 @@ def removecase():
             collection.delete_one({'case_number': case_no})
             return render_template("remove_case.html",msg=f"{case_no} has been removed successfully")
         else:
-            return render_template("remove_case.html",msg="Invalid")
+            return render_template("remove_case.html",msg=f"{case_no} has been removed successfully")
     else:
         return render_template("remove_case.html")
 
