@@ -18,17 +18,21 @@ from email import encoders
 # MongoDB Configuration
 host = "ocdb.app"
 port = 5050
-database = "db_43589fyv5" # your database
-username = "user_43589fyv5" # your username
-password = "p43589fyv5" # your password
- 
+database = "db_43589fyv5"
+username = "user_43589fyv5"
+password = "p43589fyv5"
+
 connection_string = f"mongodb://{username}:{password}@{host}:{port}/{database}"
 my_client = MongoClient(connection_string)
 my_db = my_client[database]
 collection = my_db['cases']
 fs = gridfs.GridFS(my_db)  # Initialize GridFS
-higher_credentials = my_db["higher_credentials"]
-lower_credentials=my_db["lower_credentials"]
+
+connection_string2= f"mongodb://user_438agnzak:p438agnzak@ocdb.app:5050/db_438agnzak"
+my_client2 = MongoClient(connection_string)
+my_db2 = my_client2[database]
+higher_credentials = my_db2["higher_credentials"]
+lower_credentials=my_db2["lower_credentials"]
 # Email Configuration
 SENDER_EMAIL = "swaroopqis@gmail.com"
 SENDER_PASSWORD =  "qihb sgty ysew ikes"
@@ -38,14 +42,7 @@ SMTP_PORT = 587
 
 app = Flask(__name__)
 
-if higher_credentials.find():
-    pass
-else:
-    higher_credentials.insert_one({"id":"100","Name":"Police","password":"police@123",
-                                    "Email":"police@gmail.com","phone_no":"100",
-                                    "Address":"Police station",
-                                    "Qualification":"distinsion"
-                                 })
+#higher_credentials.insert_one({"id":"100","Name":"Police","password":"police@123","Email":"police@gmail.com","phone_no":"100","Address":"Police station","Qualification":"distinsion"})
 
 higher_id=""
 lower_id=""
@@ -421,7 +418,6 @@ def download_pdf(case_number):
         mimetype='application/pdf'
     )
 
-# for generating case pdf
 def create_case_pdf(case_data):
     """
     Generate a PDF for the given case data.
@@ -488,9 +484,16 @@ def create_case_pdf(case_data):
     buffer.seek(0)
     return buffer
 
-# email sending for edit case
-def send_email_with_attachment(recipient_email, subject, body, pdf1,pdf2, pr_name,up_name):
 
+def send_email_with_attachment(recipient_email, subject, body, pdf1,pdf2, pr_name,up_name):
+    """
+    Send an email with the provided PDF as an attachment using Gmail.
+    :param recipient_email: Email address of the recipient.
+    :param subject: Email subject.
+    :param body: Email body text.
+    :param pdf1: BytesIO object containing the PDF.
+    :param pr_name: Name of the PDF attachment.
+    """
     try:
         # Set up the SMTP server
         server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
@@ -529,7 +532,10 @@ def send_email_with_attachment(recipient_email, subject, body, pdf1,pdf2, pr_nam
     except Exception as e:
         print(f"Failed to send email: {e}")
 
-# for edit the existing case
+
+
+
+
 @app.route('/edit_case', methods=['GET', 'POST'])
 def edit_case():
     if request.method == 'POST':
@@ -538,40 +544,22 @@ def edit_case():
         texts = request.form.getlist('data_text[]')
         files = request.files.getlist('data_file[]')
 
-        # Fetch the existing case details
+        # Prepare case details
+        case_details = []
+        for i in range(len(labels)):
+            detail = {'label': labels[i], 'data': texts[i] if texts[i] else None}
+            if files[i] and files[i].filename:
+                file_id = fs.put(files[i], filename=files[i].filename)
+                detail['file_id'] = str(file_id)
+            case_details.append(detail)
+
+        recipient_email = "swaroopedupulapati1@gmail.com"
+
         if collection.find_one({'case_number': case_number}):
-            existing_case = collection.find_one({'case_number': case_number})
-            existing_details = existing_case['details'] if existing_case else []
-
-            # Create a dictionary of existing file mappings for quick lookup
-            existing_files = {detail['label']: detail.get('file_id') for detail in existing_details}
-
-            # Prepare new case details
-            case_details = []
-            for i in range(len(labels)):
-                label = labels[i]
-                text = texts[i] if texts[i] else None
-                file = files[i]
-
-                detail = {'label': label, 'data': text}
-
-                # Check if a new file is uploaded
-                if file and file.filename:
-                    # Upload new file to GridFS
-                    file_id = fs.put(file, filename=file.filename)
-                    detail['file_id'] = str(file_id)
-                else:
-                    # Retain existing file ID if no new file is uploaded
-                    if label in existing_files:
-                        detail['file_id'] = existing_files[label]
-
-                case_details.append(detail)
-            recipient_email = "swaroopedupulapati1@gmail.com"
             casedata = collection.find_one({'case_number': case_number})
             pdf1 = create_case_pdf(casedata)
 
-
-            # Update the case in MongoDB
+            # Insert or update the case in MongoDB
             collection.update_one(
                 {'case_number': case_number},
                 {'$set': {'details': case_details}},
@@ -580,8 +568,6 @@ def edit_case():
             case_data = collection.find_one({'case_number': case_number})
             pdf2=create_case_pdf(case_data)
 
-
-            
             # Send Email
             subject = f"Case Details for Case Number {case_number}"
             body = f"{case_number}."
@@ -589,11 +575,14 @@ def edit_case():
             up_name= f"case_{case_number}_updated_details.pdf"
             send_email_with_attachment(recipient_email, subject, body, pdf1,pdf2, pr_name,up_name)
 
-            return render_template("edit_case.html",msg=f"case details updated successsfully")
-        else:            
-            return render_template("edit_case.html",msg=f"Invalid")
-    else:
-        return render_template('edit_case.html')
+
+            return render_template('edit_case.html',msg=f"{case_number} updated successfully")
+        else:
+                return render_template('edit_case.html',msg="Invalid")
+
+
+    return render_template('edit_case.html')
+
 
 @app.route('/fetch_case/<case_number>', methods=['GET'])
 def fetch_case(case_number):
