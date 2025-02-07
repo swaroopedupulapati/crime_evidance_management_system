@@ -178,7 +178,7 @@ def regloo():
                 msg['To'] = Email
                 msg['Subject'] = "registration"
                     # Attach the email body
-                head=MIMEText(f"Your successfully registerd for higher officials in \n Crime evidence Management system", 'plain')
+                head=MIMEText(f"Your successfully registerd for lower officials in \n Crime evidence Management system", 'plain')
                 msg.attach(head)
                 text_part = MIMEText(f"""\nyour credentials\n ID:{ID}\n Name:{Name}\n Password:{Password}\n Email:{Email}\n Phone:{Phone}\n Address:{Address}\n Qualification:{Qualification}""", 'plain')
                 msg.attach(text_part)
