@@ -15,6 +15,11 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
 from email.mime.text import MIMEText
 from email import encoders
+
+
+app = Flask(__name__)
+
+
 # MongoDB Configuration
 host = "ocdb.app"
 port = 5050
@@ -27,12 +32,8 @@ my_client = MongoClient(connection_string)
 my_db = my_client[database]
 collection = my_db['cases']
 fs = gridfs.GridFS(my_db)  # Initialize GridFS
-
-connection_string2= f"mongodb://user_438agnzak:p438agnzak@ocdb.app:5050/db_438agnzak"
-my_client2 = MongoClient(connection_string)
-my_db2 = my_client2[database]
-higher_credentials = my_db2["higher_credentials"]
-lower_credentials=my_db2["lower_credentials"]
+higher_credentials = my_db["higher_credentials"]
+lower_credentials=my_db["lower_credentials"]
 # Email Configuration
 SENDER_EMAIL = "swaroopqis@gmail.com"
 SENDER_PASSWORD =  "qihb sgty ysew ikes"
@@ -40,7 +41,6 @@ SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = 587
 
 
-app = Flask(__name__)
 
 #higher_credentials.insert_one({"id":"100","Name":"Police","password":"police@123","Email":"police@gmail.com","phone_no":"100","Address":"Police station","Qualification":"distinsion"})
 
@@ -414,6 +414,7 @@ def download_pdf(case_number):
         mimetype='application/pdf'
     )
 
+
 def create_case_pdf(case_data):
     """
     Generate a PDF for the given case data.
@@ -480,7 +481,6 @@ def create_case_pdf(case_data):
     buffer.seek(0)
     return buffer
 
-
 def send_email_with_attachment(recipient_email, subject, body, pdf1,pdf2, pr_name,up_name):
     """
     Send an email with the provided PDF as an attachment using Gmail.
@@ -530,8 +530,6 @@ def send_email_with_attachment(recipient_email, subject, body, pdf1,pdf2, pr_nam
 
 
 
-
-
 @app.route('/edit_case', methods=['GET', 'POST'])
 def edit_case():
     if request.method == 'POST':
@@ -540,48 +538,64 @@ def edit_case():
         texts = request.form.getlist('data_text[]')
         files = request.files.getlist('data_file[]')
 
-        # Prepare case details
+        # Fetch the existing case details
+        existing_case = collection.find_one({'case_number': case_number})
+        existing_details = existing_case['details'] if existing_case else []
+
+        # Create a dictionary of existing file mappings for quick lookup
+        existing_files = {detail['label']: detail.get('file_id') for detail in existing_details}
+
+        # Prepare new case details
         case_details = []
         for i in range(len(labels)):
-            detail = {'label': labels[i], 'data': texts[i] if texts[i] else None}
-            if files[i] and files[i].filename:
-                file_id = fs.put(files[i], filename=files[i].filename)
+            label = labels[i]
+            text = texts[i] if texts[i] else None
+            file = files[i]
+
+            detail = {'label': label, 'data': text}
+
+            # Check if a new file is uploaded
+            if file and file.filename:
+                # Upload new file to GridFS
+                file_id = fs.put(file, filename=file.filename)
                 detail['file_id'] = str(file_id)
+            else:
+                # Retain existing file ID if no new file is uploaded
+                if label in existing_files:
+                    detail['file_id'] = existing_files[label]
+
             case_details.append(detail)
-
         recipient_email = "swaroopedupulapati1@gmail.com"
-
-        if collection.find_one({'case_number': case_number}):
-            casedata = collection.find_one({'case_number': case_number})
-            pdf1 = create_case_pdf(casedata)
-
-            # Insert or update the case in MongoDB
-            collection.update_one(
-                {'case_number': case_number},
-                {'$set': {'details': case_details}},
-                upsert=True
-            )
-            case_data = collection.find_one({'case_number': case_number})
-            pdf2=create_case_pdf(case_data)
-
-            # Send Email
-            subject = f"Case Details for Case Number {case_number}"
-            body = f"{case_number}."
-            pr_name = f"case_{case_number}_details.pdf"
-            up_name= f"case_{case_number}_updated_details.pdf"
-            send_email_with_attachment(recipient_email, subject, body, pdf1,pdf2, pr_name,up_name)
+        casedata = collection.find_one({'case_number': case_number})
+        pdf1 = create_case_pdf(casedata)
 
 
-            return render_template('edit_case.html',msg=f"{case_number} updated successfully")
-        else:
-                return render_template('edit_case.html',msg="Invalid")
+        # Update the case in MongoDB
+        collection.update_one(
+            {'case_number': case_number},
+            {'$set': {'details': case_details}},
+            upsert=True
+        )
+        case_data = collection.find_one({'case_number': case_number})
+        pdf2=create_case_pdf(case_data)
 
+
+        
+        # Send Email
+        subject = f"Case Details for Case Number {case_number}"
+        body = f"{case_number}."
+        pr_name = f"case_{case_number}_details.pdf"
+        up_name= f"case_{case_number}_updated_details.pdf"
+        send_email_with_attachment(recipient_email, subject, body, pdf1,pdf2, pr_name,up_name)
+
+
+        return "Case details have been successfully updated!"
 
     return render_template('edit_case.html')
 
 
-@app.route('/fetch_case/<case_number>', methods=['GET'])
-def fetch_case(case_number):
+@app.route('/fetch_case_details/<case_number>', methods=['GET'])
+def fetch_case_details(case_number):
     """Fetch case details by case number."""
     case = collection.find_one({'case_number': case_number})
     if case:
@@ -595,8 +609,8 @@ def fetch_case(case_number):
         return jsonify(case)
     return jsonify({'error': 'Case not found'}), 404
 
-@app.route('/downloadd/<file_id>')
-def downloadd(file_id):
+@app.route('/downloadd_files/<file_id>')
+def downloadd_files(file_id):
     """Download or render files from GridFS using file_id."""
     file_data = fs.get(ObjectId(file_id))
     file_type = file_data.filename.split('.')[-1].lower()

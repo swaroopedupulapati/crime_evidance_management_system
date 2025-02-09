@@ -77,7 +77,7 @@
                 return;
             }
 
-            fetch(`/fetch_case/${caseNumber}`)
+            fetch(`/fetch_case_details/${caseNumber}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.error) {
@@ -97,11 +97,11 @@
                             const fileExtension = detail.filename.split('.').pop().toLowerCase();
 
                             if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {
-                                filePreview = `<img src="/downloadd/${detail.file_id}" alt="Image Preview" style="max-width: 100%;">`;
+                                filePreview = `<img src="/downloadd_files/${detail.file_id}" alt="Image Preview" style="max-width: 100%;">`;
                             } else if (['pdf'].includes(fileExtension)) {
                                 filePreview = `
                                     <iframe 
-                                        src="/downloadd/${detail.file_id}" 
+                                        src="/downloadd_files/${detail.file_id}" 
                                         type="application/pdf" 
                                         width="100%" 
                                         height="400px" 
@@ -109,16 +109,16 @@
                                     </iframe>`;
                             } else if (['mp4', 'webm'].includes(fileExtension)) {
                                 filePreview = `<video controls width="100%">
-                                    <source src="/downloadd/${detail.file_id}" type="video/${fileExtension}">
+                                    <source src="/downloadd_files/${detail.file_id}" type="video/${fileExtension}">
                                     Your browser does not support the video tag.
                                 </video>`;
                             } else if (['mp3', 'wav'].includes(fileExtension)) {
                                 filePreview = `<audio controls>
-                                    <source src="/downloadd/${detail.file_id}" type="audio/${fileExtension}">
+                                    <source src="/downloadd_files/${detail.file_id}" type="audio/${fileExtension}">
                                     Your browser does not support the audio element.
                                 </audio>`;
                             } else {
-                                filePreview = `<a href="/downloadd/${detail.file_id}" target="_blank">Download ${detail.filename}</a>`;
+                                filePreview = `<a href="/downloadd_files/${detail.file_id}" target="_blank">Download ${detail.filename}</a>`;
                             }
                         }
 
@@ -211,22 +211,21 @@
         }
     </script>
 </head>
-    <body>
-        <div class="edit">
-            <h1>Modify Case Details</h1>
-            <h4>{{msg}}</h4>
-            <form method="POST" action="/edit_case" enctype="multipart/form-data">
-                <label for="case_number">Case Number:</label>
-                <input type="text" id="case_number" name="case_number" required>
-                <button type="button" onclick="fetchCaseDetails()">Search Case</button><br><br>
+<body>
+    <div class="edit">
+    <h1>Modify Case Details</h1>
+        <form method="POST" action="/edit_case" enctype="multipart/form-data">
+            <label for="case_number">Case Number:</label>
+            <input type="text" id="case_number" name="case_number" required>
+            <button type="button" onclick="fetchCaseDetails()">Search Case</button><br><br>
 
-                <div id="detailsContainer">
-                    <!-- Dynamic details will appear here -->
-                </div>
-
-                <button type="button" onclick="addDetail()">Add Detail</button><br><br>
-                <button type="submit">Submit</button>
-            </form>
+            <div id="detailsContainer">
+                <!-- Dynamic details will appear here -->
             </div>
-    </body>
+
+            <button type="button" onclick="addDetail()">Add Detail</button><br><br>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+</body>
 </html>
