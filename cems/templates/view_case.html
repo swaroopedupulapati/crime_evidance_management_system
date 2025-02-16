@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>View Case Details</title>
+    <title>CEMS-View Case</title>
+    <link rel="icon" type="image/png" href="../static/logo.png">
     <style>
         body {
-            background-color: #1A1A2E;
+            /* background-color: #1A1A2E; */
+            background-color: white;
             color: #FFFFFF;
             font-family: Arial, sans-serif;
             margin: 0;
@@ -16,19 +18,19 @@
             align-items: center;
         }
         .details{
-            background: #121212;
-                padding: 20px;
-                border-radius: 10px;
-                box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
-                
-                width: 90vh;/* Enables scrolling inside form */
+            /* background: #121212; */
+            background-color: #195ba1; 
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 25px rgba(255, 0, 0, 0.5);
+            width: 90vh;/* Enables scrolling inside form */
         
         }
         h1, h2 {
             color: #FFD700;
             text-align: center;
         }
-        form {
+        /* form {
             background: #121212;
             padding: 20px;
             border-radius: 10px;
@@ -36,13 +38,13 @@
             width: 400px;
             text-align: center;
             margin-bottom: 20px;
-        }
+        } */
         label {
             font-weight: bold;
             color: #FFD700;
         }
         input[type="text"] {
-            width: 100%;
+            width: 96%;
             padding: 10px;
             margin: 10px 0;
             background: #333;
@@ -56,13 +58,16 @@
             border: none;
             border-radius: 5px;
             font-size: 16px;
-            background: #D72638;
+            /* background: #D72638; */
+            background: #1A1A2E;
             color: #FFFFFF;
             cursor: pointer;
             transition: 0.3s;
         }
         button:hover {
-            background: #A30000;
+            /* background: #A30000; */
+            background: #13134b;
+            transform: scale(1.05);
         }
         .case-container {
             background: #222;
@@ -116,8 +121,10 @@
             display: block;
             text-align: center;
             font-size: 18px;
-            background: #FFD700;
+            /* background: #FFD700; */
+            background: #1A1A2E;
             color: #000;
+            color: #FFFFFF;
             text-decoration: none;
             padding: 10px;
             border-radius: 5px;
@@ -125,50 +132,52 @@
             transition: 0.3s;
         }
         .file-link:hover {
-            background: #C9A000;
+            /* background: #A30000; */
+            background: #13134b;
+            transform: scale(1.05);
         }
     </style>
 </head>
 <body>
-    <h1>View Case Details</h1>
-    <h4>{{msg}}</h4>
-    <form method="POST" action="/view">
-        <label for="case_number">Enter Case Number:</label>
-        <input type="text" id="case_number" name="case_number" required>
-        <button type="submit">Search</button>
-    </form>
     <div class="details">
-    {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        <ul>
-        {% for category, message in messages %}
-            <li style="color: red;">{{ message }}</li>
-        {% endfor %}
-        </ul>
-    {% endif %}
-    {% endwith %}
+        <h1>View Case Details</h1>
+        <h4>{{msg}}</h4>
+        <form method="POST" action="/view">
+            <label for="case_number">Enter Case Number:</label>
+            <input type="text" id="case_number" name="case_number" required>
+            <button type="submit">Search</button>
+        </form><br><br>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul>
+            {% for category, message in messages %}
+                <li style="color: red;">{{ message }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+        {% endwith %}
 
-    {% if case_data %}
-    <h2>Case Number: {{ case_data.case_number }}</h2>
-    <div>
-        {% for item in file_contents %}
-        <div class="detail">
-            <div class="label">{{ item.detail.label }}</div>
-            <div class="data">{{ item.detail.data }}</div>
+        {% if case_data %}
+        <h2>Case Number: {{ case_data.case_number }}</h2>
+        <div>
+            {% for item in file_contents %}
+            <div class="detail">
+                <div class="label">{{ item.detail.label }}</div>
+                <div class="data">{{ item.detail.data }}</div>
 
-            {% if item.file %}
-                {% if item.file.type == 'text' %}
-                <pre class="data">{{ item.file.content }}</pre>
-                {% elif item.file.type == 'pdf' %}
-                <iframe src="data:application/pdf;base64,{{ item.file.content }}"></iframe>
-                {% elif item.file.type == 'image' %}
-                <img src="{{ item.file.content }}" alt="Image">
+                {% if item.file %}
+                    {% if item.file.type == 'text' %}
+                    <pre class="data">{{ item.file.content }}</pre>
+                    {% elif item.file.type == 'pdf' %}
+                    <iframe src="data:application/pdf;base64,{{ item.file.content }}"></iframe>
+                    {% elif item.file.type == 'image' %}
+                    <img src="{{ item.file.content }}" alt="Image">
+                    {% endif %}
                 {% endif %}
-            {% endif %}
+            </div>
+            {% endfor %}
         </div>
-        {% endfor %}
     </div>
-</div>
     <div style="margin-top: 20px;">
         <button onclick="window.location.href='/download_pdf/{{ case_data.case_number }}'" class="file-link" style="font-size: 18px;">Download Case Details as PDF</button>
     </div>

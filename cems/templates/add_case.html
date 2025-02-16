@@ -4,11 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Submit Case Details with File Preview</title>
+    <title>CEMS-Add case</title>
+    <link rel="icon" type="image/png" href="../static/logo.png">
     
     <style>
         body {
-            background-color: #1A1A2E;
+            /* background-color: #1A1A2E; */
+            background-color: white;
             color: #FFFFFF;
             font-family: Arial, sans-serif;
             margin: 0;
@@ -20,7 +22,8 @@
             overflow-y: auto; 
         }
         .add {
-            background: #121212;
+                /* background: #121212; */
+                background-color: #195ba1;
                 padding: 20px;
                 border-radius: 10px;
                 box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
@@ -28,7 +31,8 @@
                 width: 90vh;/* Enables scrolling inside form */
         }
         h1 {
-            color: #D72638;
+            /* color: #D72638; */
+            color: black;
             text-align: center;
         }
         h4 {
@@ -40,7 +44,7 @@
             color:white;
         }
         input[type="text"], input[type="file"] {
-            width: 100%;
+            width: 98%;
             padding: 8px;
             margin: 5px 0 10px;
             background: #333;
@@ -56,13 +60,16 @@
             border: none;
             border-radius: 5px;
             font-size: 1rem;
-            background: #D72638;
+            /* background: #D72638; */
+            background: #1A1A2E;
             color: #FFFFFF;
             cursor: pointer;
             transition: 0.3s;
         }
         button:hover {
-            background: #A30000;
+            /* background: #A30000; */
+            background: #13134b;
+            transform: scale(1.02);
         }
         .detail {
             background: #222;
